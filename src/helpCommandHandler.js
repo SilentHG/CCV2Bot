@@ -1,11 +1,14 @@
 const helpCard = require("./adaptiveCards/helpCommand.json");
 const { AdaptiveCards } = require("@microsoft/adaptivecards-tools");
 const { CardFactory, MessageFactory } = require("botbuilder");
+const CosmosClient = require('@azure/cosmos').CosmosClient
+const config = require('./internal/config')
 
 class HelpCommandHandler {
   triggerPatterns = "help";
 
   async handleCommandReceived(context, message) {
+
     // verify the command arguments which are received from the client if needed.
     console.log(`App received message: ${message.text}`);
 
@@ -18,7 +21,7 @@ class HelpCommandHandler {
     body += "6. help \n\n \n\n";
     body += "Note: \n\n"
     body += "databaseUpdateMode can be NONE or UPDATE \n\n \n\n";
-    body += "strategy can be ROLLING_UPDATE or RECREATE or GREEN \n\n \n\n";
+    body += "strategy can be ROLLING_UPDATE or RECREATE or GREEN. \n\n \n\n";
     
 
     // do something to process your command and return message activity as the response
