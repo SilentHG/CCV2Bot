@@ -64,6 +64,22 @@
                         {
                             "title": "getDeploymentProgress",
                             "description": "Example Usage: getDeploymentProgress <deploymentId> | Description: Get Deployment Progress for a previously created Deployment"
+                        },
+                        {
+                            "title": "setupApiToken",
+                            "description": "Example Usage: setupApiToken <apiToken> <subscriptionCode> | Description: Setup API Token and subscriptionCode for the Bot"
+                        },
+                        {
+                            "title": "updateBotAdmin",
+                            "description": "Example Usage: updateBotAdmin <@mention> | Description: Update Bot Admin"
+                        },
+                        {
+                            "title": "getBotAdmin",
+                            "description": "Example Usage: getBotAdmin | Description: Get Bot Admin"
+                        },
+                        {
+                            "title": "giveCreateAccess",
+                            "description": "Example Usage: giveCreateAccess <@mention> | Description: Give Create Build/Deployment Access to a user"
                         }
                     ]
                 }
