@@ -24,9 +24,9 @@ class CreateBuildCommandHandler {
     const { resource: item } = await container.item(channelId, channelId).read();
 
     // check if item is null
-    if (item == null) {
+    if (item.apiToken == null || item.subscriptionCode == null) {
       var message = "You need to setup the api token first. \n\n";
-      message += "Please run the command: setupApiToken <apiToken> <subscriptionCode> \n\n";
+      message += "Please run the command: setupApiToken (apiToken) (subscriptionCode) \n\n";
       await context.sendActivity(MessageFactory.text(message));
       return;
     }
@@ -39,7 +39,7 @@ class CreateBuildCommandHandler {
     var branch = message.text.split(" ")[2];
 
     // check if the sender is admin or in createAccessUsers list
-    if (item.adminId != senderId || item.createAccessUsers.indexOf(senderId) == -1) {
+    if (item.adminId != senderId && item.createAccessUsers.indexOf(senderId) == -1) {
       var message = "You don't have access to create a build. \n\n";
       await context.sendActivity(MessageFactory.text(message));
       return;
@@ -60,7 +60,7 @@ class CreateBuildCommandHandler {
     });
     console.log(response.data);
     const build_code = response.data['code'];
-    let replyMessage = "Build with name " + name + " \n\n and Branch " + branch + "\n\n has been created with code " + build_code;
+    let replyMessage = "Build with name " + name + " and Branch " + branch + "\n\n has been created with code " + build_code;
 
     // render your adaptive card for reply message
     const cardData = {

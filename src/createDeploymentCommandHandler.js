@@ -24,9 +24,9 @@ class CreateDeploymentCommandHandler {
     const { resource: item } = await container.item(channelId, channelId).read();
 
     // check if item is null
-    if (item == null) {
+    if (item.apiToken == null || item.subscriptionCode == null) {
       var message = "You need to setup the api token first. \n\n";
-      message += "Please run the command: setupApiToken <apiToken> <subscriptionCode> \n\n";
+      message += "Please run the command: setupApiToken (apiToken) (subscriptionCode) \n\n";
       await context.sendActivity(MessageFactory.text(message));
       return;
     }
@@ -41,7 +41,7 @@ class CreateDeploymentCommandHandler {
     var strategy = message.text.split(" ")[4].toUpperCase();
 
     // check if the sender is admin or in createAccessUsers list
-    if (item.adminId != senderId || item.createAccessUsers.indexOf(senderId) == -1) {
+    if (item.adminId != senderId && item.createAccessUsers.indexOf(senderId) == -1) {
       var message = "You don't have access to create a deployment. \n\n";
       await context.sendActivity(MessageFactory.text(message));
       return;
@@ -64,7 +64,7 @@ class CreateDeploymentCommandHandler {
     });
     console.log(response.data);
     const deployment_code = response.data['code'];
-    let replyMessage = "Deployment with build code " + build_code + "\n\n and Database Update Mode " + databaseUpdateMode + "\n\n and Environment Code " + environmentCode + "\n\n and Strategy " + strategy + "\n\n has been created with code " + deployment_code;
+    let replyMessage = "Deployment with build code " + build_code + "\n\n Database Update Mode " + databaseUpdateMode + "\n\n Environment Code " + environmentCode + "\n\n Strategy " + strategy + "\n\n has been created with code " + deployment_code;
 
     // render your adaptive card for reply message
     const cardData = {

@@ -22,9 +22,9 @@ class GetBuildProgressCommandHandler {
     const { resource: item } = await container.item(channelId, channelId).read();
 
     // check if item is null
-    if (item == null) {
+    if (item.apiToken == null || item.subscriptionCode == null) {
       var message = "You need to setup the api token first. \n\n";
-      message += "Please run the command: setupApiToken <apiToken> <subscriptionCode> \n\n";
+      message += "Please run the command: setupApiToken (apiToken) (subscriptionCode) \n\n";
       await context.sendActivity(MessageFactory.text(message));
       return;
     }

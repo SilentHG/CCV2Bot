@@ -1,6 +1,6 @@
 const getEnvironmentsCard = require("./adaptiveCards/getEnvironmentsCommand.json");
 const { AdaptiveCards } = require("@microsoft/adaptivecards-tools");
-const { CardFactory, MessageFactory } = require("botbuilder");
+const { CardFactory, MessageFactory, TeamsInfo } = require("botbuilder");
 const CosmosClient = require('@azure/cosmos').CosmosClient
 const config = require('./internal/config')
 
@@ -34,6 +34,13 @@ class GiveCreateAccessCommandHandler {
     var mentionMessage = context.activity.entities[1];
     var mentionId = mentionMessage.mentioned.id;
     var newCreateAccessUser = await TeamsInfo.getMember(context, mentionId);
+
+    // check if the user is already in createAccessUsers list
+    if (item.createAccessUsers.indexOf(newCreateAccessUser.id) != -1) {
+      var message = "User already has create access. \n\n";
+      await context.sendActivity(MessageFactory.text(message));
+      return;
+    }
 
     // update record in cosmos db
     item.createAccessUsers.push(newCreateAccessUser.id);
