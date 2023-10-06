@@ -38,6 +38,13 @@ class UpdateBotAdminCommandHandler {
     // update record in cosmos db
     item.adminId = newAdmin.id;
     item.adminName = newAdmin.name;
+
+    // remove the user from createAccessUsers list
+    var index = item.createAccessUsers.indexOf(newAdmin.id);
+    if (index > -1) {
+      item.createAccessUsers.splice(index, 1);
+    }
+
     const { resource: updatedItem } = await container.item(channelId, channelId).replace(item);
 
     const mention = {
