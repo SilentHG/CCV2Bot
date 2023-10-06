@@ -15,8 +15,8 @@
         "outline": "outline.png"
     },
     "name": {
-        "short": "CCV2Bot-${{TEAMSFX_ENV}}",
-        "full": "CCV2Helper"
+        "short": "DevOpsBot-${{TEAMSFX_ENV}}",
+        "full": "DevOpsBot"
     },
     "description": {
         "short": "Made to easier the CCV2 Deployment Process \n\n Made by Shakir Ali",
