@@ -6,6 +6,10 @@ const { GetBuildProgressCommandHandler } = require("../getBuildProgressCommandHa
 const { CreateBuildCommandHandler } = require("../createBuildCommandHandler");
 const { GetDeploymentProgressCommandHandler } = require("../getDeploymentProgressCommandHandler");
 const { CreateDeploymentCommandHandler } = require("../createDeploymentCommandHandler");
+const { UpdateBotAdminCommandHandler } = require("../updateBotAdminCommandHandler");
+const {GetBotAdminCommandHandler} = require("../getBotAdminCommandHandler");
+const {SetupApiTokenCommandHandler} = require("../setupApiTokenCommandHandler");
+const {GiveCreateAccessCommandHandler} = require("../giveCreateAccessCommandHandler");
 const config = require("./config");
 
 // Create the command bot and register the command handlers for your app.
@@ -21,7 +25,16 @@ const commandApp = new ConversationBot({
   },
   command: {
     enabled: true,
-    commands: [new HelpCommandHandler(), new GetEnvironmentsCommandHandler(), new GetBuildProgressCommandHandler(), new CreateBuildCommandHandler(), new GetDeploymentProgressCommandHandler(), new CreateDeploymentCommandHandler()],
+    commands: [new HelpCommandHandler(),
+       new GetEnvironmentsCommandHandler(),
+        new GetBuildProgressCommandHandler(),
+         new CreateBuildCommandHandler(),
+          new GetDeploymentProgressCommandHandler(),
+           new CreateDeploymentCommandHandler(),
+            new UpdateBotAdminCommandHandler(),
+             new GetBotAdminCommandHandler(),
+              new SetupApiTokenCommandHandler(),
+               new GiveCreateAccessCommandHandler()],
   },
 });
 

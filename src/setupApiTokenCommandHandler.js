@@ -4,14 +4,18 @@ const { CardFactory, MessageFactory } = require("botbuilder");
 const CosmosClient = require('@azure/cosmos').CosmosClient
 const config = require('./internal/config')
 
-class GetEnvironmentsCommandHandler {
-  triggerPatterns = "getEnvironments";
+class SetupApiTokenCommandHandler {
+  triggerPatterns = "setupApiToken";
   
 
   async handleCommandReceived(context, message) {
     // verify the command arguments which are received from the client if needed.
     console.log(`App received message: ${message.text}`);
+
+    // get mention from the message and update in cosmos db
     var channelId = context.activity.conversation.id;
+    var adminId = context.activity.from.id;
+    // get record from cosmos db by id as channelId
     const endpoint = config.COSMOS_ENDPOINT;
     const key = config.COSMOS_KEY;
     const databaseId = config.COSMOS_DATABASE;
@@ -20,37 +24,27 @@ class GetEnvironmentsCommandHandler {
     const database = client.database(databaseId);
     const container = database.container(containerId);
     const { resource: item } = await container.item(channelId, channelId).read();
-
-    // check if item is null
-    if (item.apiToken == null || item.subscriptionCode == null) {
-      var message = "You need to setup the api token first. \n\n";
-      message += "Please run the command: setupApiToken (apiToken) (subscriptionCode) \n\n";
+    var itemAdminId = item.adminId;
+    if (itemAdminId != adminId) {
+      var message = "You are not the admin of this bot. \n\n";
+      message += "Only admin can run this commad \n\n";
       await context.sendActivity(MessageFactory.text(message));
       return;
     }
 
-    var base_url = config.CCV2_BASE_URL;
-    var subscriptionId = item.subscriptionCode;
-    var bearer_token = item.apiToken;
-    // call an api to CCV2 to get the environments
-    const axios = require("axios");
-    const url = base_url + subscriptionId + "/environments";
-    console.log(url);
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: "Bearer " + bearer_token,
-      },
-    });
-    console.log(response.data);
-    const environments = response.data['value'];
-    let replyMessage = "";
-    for (const environment of environments) {
-      replyMessage += " ===================== \n\n Environment: " + environment['name'] + "\n\n Status: " + environment['status'] + " \n\n DeploymentStatus: " + environment['deploymentStatus'] + "\n\n";
-    }
+    var apiToken = message.text.split(" ")[1];
+    var subscriptionCode = message.text.split(" ")[2];
+    // update record in cosmos db
+    item.apiToken = apiToken;
+    item.subscriptionCode = subscriptionCode;
+    const { resource: updatedItem } = await container.item(channelId, channelId).replace(item);
+
+    
+    let replyMessage = "You can now create builds and deployments.";
 
     // render your adaptive card for reply message
     const cardData = {
-      title: "CCV2 Environments Information",
+      title: "Api Token has been updated successfully",
       body: replyMessage,
     };
 
@@ -60,6 +54,6 @@ class GetEnvironmentsCommandHandler {
 }
 
 module.exports = {
-  GetEnvironmentsCommandHandler,
+  SetupApiTokenCommandHandler,
 };
 
