@@ -5,7 +5,7 @@ const CosmosClient = require('@azure/cosmos').CosmosClient
 const config = require('./internal/config')
 
 class GetBuildProgressCommandHandler {
-  triggerPatterns = "getBuildProgress";
+  triggerPatterns = "getBuildsProgress";
   
 
   async handleCommandReceived(context, message) {
@@ -35,7 +35,43 @@ class GetBuildProgressCommandHandler {
 
     var build_code = message.text.split(" ")[1];
 
-    // call an api to CCV2 to get the environments
+    if (build_code == null || build_code == "") {
+      // call an api to CCV2 to get all previous builds
+      const axios = require("axios");
+      const url = base_url + subscriptionId + "/builds?top=4&count=true&orderby=desc";
+      console.log(url);
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: "Bearer " + bearer_token,
+        },
+      });
+      
+      var response_data = response.data['value']
+      // convert response_data list to 4 items
+      response_data = response_data.splice(0,4)
+      console.log(response_data);
+
+      let replyMessage = "The following builds are available: \n\n";
+      for (var i = 0; i < response_data.length; i++) {
+        replyMessage += "======================================" + "\n\n";
+        replyMessage += "Build code: " + response_data[i]['code'] + "\n\n";
+        replyMessage += "Build name: " + response_data[i]['name'] + "\n\n";
+        replyMessage += "Build branch: " + response_data[i]['branch'] + "\n\n";
+        replyMessage += "Build status: " + response_data[i]['status'] + "\n\n";
+      }
+
+      // render your adaptive card for reply message
+      const cardData = {
+        title: "Past Builds Information",
+        body: replyMessage,
+      };
+
+      const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
+      return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));
+    }
+    else {
+
+    // call an api to CCV2 to get current build progress
     const axios = require("axios");
     const url = base_url + subscriptionId + "/builds/"+build_code+"/progress";
     console.log(url);
@@ -59,6 +95,7 @@ class GetBuildProgressCommandHandler {
     const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
     return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));
   }
+}
 }
 
 module.exports = {

@@ -15,12 +15,12 @@
         "outline": "outline.png"
     },
     "name": {
-        "short": "DevOpsBot-${{TEAMSFX_ENV}}",
+        "short": "DevOpsBot",
         "full": "DevOpsBot"
     },
     "description": {
-        "short": "Made to easier the CCV2 Deployment Process \n\n Made by Shakir Ali",
-        "full": "Made to easier the CCV2 Deployment Process \n\n Made by Shakir Ali"
+        "short": "I will help you with CCV2 related tasks | Created by Shakir Ali ",
+        "full": "Made to easier the CCV2 Deployment Process \n\n if you are facing any issues or have any suggestions, please reach out to shakir.ali@royalcyber.com"
     },
     "accentColor": "#FFFFFF",
     "bots": [
@@ -50,8 +50,8 @@
                             "description": "Get All CCV2 Environments"
                         },
                         {
-                            "title": "getBuildProgress",
-                            "description": "Example Usage: getBuildProgress <buildId> | Description: Get Build Progress for a previously created Build"
+                            "title": "getBuildsProgress",
+                            "description": "Example Usage: getBuildsProgress <buildId>(optional) | Description: Get Builds Progress for a previously created Builds "
                         },
                         {
                             "title": "createBuild",
@@ -62,8 +62,8 @@
                             "description": "Example Usage: createDeployment <buildCode> <databaseUpdateMode> <environmentCode> <strategy>"
                         },
                         {
-                            "title": "getDeploymentProgress",
-                            "description": "Example Usage: getDeploymentProgress <deploymentId> | Description: Get Deployment Progress for a previously created Deployment"
+                            "title": "getDeploymentsProgress",
+                            "description": "Example Usage: getDeploymentsProgress <deploymentId>(optional) | Get Deployment Progress for a previously created Deployments"
                         },
                         {
                             "title": "setupApiToken",

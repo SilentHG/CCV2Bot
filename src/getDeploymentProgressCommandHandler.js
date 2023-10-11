@@ -5,7 +5,7 @@ const CosmosClient = require('@azure/cosmos').CosmosClient
 const config = require('./internal/config')
 
 class GetDeploymentProgressCommandHandler {
-  triggerPatterns = "getDeploymentProgress";
+  triggerPatterns = "getDeploymentsProgress";
   
 
   async handleCommandReceived(context, message) {
@@ -35,6 +35,45 @@ class GetDeploymentProgressCommandHandler {
 
     var deployment_code = message.text.split(" ")[1];
 
+    if (deployment_code == null || deployment_code == "") {
+      // call an api to CCV2 to get all previous deployments
+      const axios = require("axios");
+      const url = base_url + subscriptionId + "/deployments?subscriptionCode="+subscriptionId+"&top=4&count=true&orderby=desc";
+      console.log(url);
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: "Bearer " + bearer_token,
+        },
+      });
+
+      var response_data = response.data['value']
+      // convert response_data list to 4 items
+      response_data = response_data.splice(0,4)
+      console.log(response_data);
+    
+      let replyMessage = "The following deployments are available: \n\n";
+      for (var i = 0; i < response_data.length; i++) {
+        replyMessage += "======================================" + "\n\n";
+        replyMessage += "Deployment code: " + response_data[i]['code'] + "\n\n";
+        replyMessage += "Deployment status: " + response_data[i]['status'] + "\n\n";
+        replyMessage += "Deployment build code: " + response_data[i]['buildCode'] + "\n\n";
+        replyMessage += "Deployment environment code: " + response_data[i]['environmentCode'] + "\n\n";
+      }
+
+      // render your adaptive card for reply message
+      const cardData = {
+        title: "Past Deployments Information",
+        body: replyMessage,
+      };
+
+      const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
+      return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));
+
+
+    }
+
+    else
+    {
     // call an api to CCV2 to get the environments
     const axios = require("axios");
     const url = base_url + subscriptionId + "/deployments/"+deployment_code+"/progress";
@@ -59,6 +98,7 @@ class GetDeploymentProgressCommandHandler {
     const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
     return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));
   }
+}
 }
 
 module.exports = {

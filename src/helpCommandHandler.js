@@ -14,9 +14,9 @@ class HelpCommandHandler {
 
     var body = "Following commands are available: \n\n \n\n";
     body += "1. createBuild <name> <branch> Example: createBuild D1 develop \n\n \n\n";
-    body += "2. getBuildProgress <build_code> Example: getBuildProgress 1234 \n\n \n\n";
+    body += "2. getBuildsProgress <build_code>(optional) Example: getBuildProgress | getBuildsProgress 1234 \n\n \n\n";
     body += "3. getEnvironments \n\n \n\n";
-    body += "4. getDeploymentProgress <deployment_code> Example: getDeploymentProgress 1234 \n\n \n\n";
+    body += "4. getDeploymentsProgress <deployment_code>(optional) Example: getDeploymentsProgress | getDeploymentsProgress 1234 \n\n \n\n";
     body += "5. createDeployment <build_code> <databaseUpdateMode> <environmentCode> <strategy> Example: createDeployment 1234 NONE|UPDATE d1 ROLLING_UPDATE|RECREATE|GREEN \n\n \n\n";
     body += "6. help \n\n \n\n";
     body += "7. getBotAdmin \n\n \n\n";
