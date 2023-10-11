@@ -83,7 +83,7 @@ class GetBuildProgressCommandHandler {
     console.log(response.data);
     const response_data = response.data;
     let replyMessage = "Build with code " + build_code + " has the following progress: \n\n";
-    replyMessage += "errorMessage: " + response_data['errorMessage'] + "\n\n";
+    replyMessage += "Build Status: " + response_data['buildStatus'] + "\n\n";
     replyMessage += "Percentage: " + response_data['percentage'] + "%\n\n";
 
     // render your adaptive card for reply message

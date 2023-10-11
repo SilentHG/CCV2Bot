@@ -35,8 +35,8 @@ class CreateBuildCommandHandler {
     var subscriptionId = item.subscriptionCode;
     var bearer_token = item.apiToken;
 
-    var name = message.text.split(" ")[1];
-    var branch = message.text.split(" ")[2];
+    var name = context.activity.text.split(" ")[1];
+    var branch = context.activity.text.split(" ")[2];
 
     // check if the sender is admin or in createAccessUsers list
     if (item.adminId != senderId && item.createAccessUsers.indexOf(senderId) == -1) {

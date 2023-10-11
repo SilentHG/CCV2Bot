@@ -40,6 +40,18 @@ class CreateDeploymentCommandHandler {
     var environmentCode = message.text.split(" ")[3];
     var strategy = message.text.split(" ")[4].toUpperCase();
 
+    var build_code = context.activity.text.split(" ")[1];
+    var databaseUpdateMode = context.activity.text.split(" ")[2].toUpperCase();
+    var environmentCode = context.activity.text.split(" ")[3];
+    var strategy = context.activity.text.split(" ")[4].toUpperCase();
+
+    if (databaseUpdateMode == "INITIALIZE") {
+      // not allowed to INITIALIZE
+      var message = "You are not allowed to INITIALIZE. \n\n";
+      await context.sendActivity(MessageFactory.text(message));
+      return;
+    }
+
     // check if the sender is admin or in createAccessUsers list
     if (item.adminId != senderId && item.createAccessUsers.indexOf(senderId) == -1) {
       var message = "You don't have access to create a deployment. \n\n";
