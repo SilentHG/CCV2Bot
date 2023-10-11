@@ -35,11 +35,6 @@ class CreateDeploymentCommandHandler {
     var subscriptionId = item.subscriptionCode;
     var bearer_token = item.apiToken;
 
-    var build_code = message.text.split(" ")[1];
-    var databaseUpdateMode = message.text.split(" ")[2].toUpperCase();
-    var environmentCode = message.text.split(" ")[3];
-    var strategy = message.text.split(" ")[4].toUpperCase();
-
     var build_code = context.activity.text.split(" ")[1];
     var databaseUpdateMode = context.activity.text.split(" ")[2].toUpperCase();
     var environmentCode = context.activity.text.split(" ")[3];
