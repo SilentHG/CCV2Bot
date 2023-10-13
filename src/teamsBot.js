@@ -47,7 +47,7 @@ class TeamsBot extends TeamsActivityHandler {
       var message = "DevOps Bot has been installed successfully. \n\n";
       message += `${mention.text} you are the admin of this bot. \n\n`;
       message += "Please use following command to setup CCV2 credentials \n\n";
-      message += "setApiToken <api_token> <subscription_code> \n\n";
+      message += "setupApiToken <api_token> <subscription_code> \n\n";
 
       const replyActivity = MessageFactory.text(message);
       replyActivity.entities = [mention];
