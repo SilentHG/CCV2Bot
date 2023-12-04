@@ -26,6 +26,9 @@ class HelpCommandHandler {
     body += "Note: \n\n"
     body += "databaseUpdateMode can be NONE or UPDATE \n\n \n\n";
     body += "strategy can be ROLLING_UPDATE or RECREATE or GREEN. \n\n \n\n";
+    body += "NOTE: \n\n"
+    body += "1. INITIALIZATION is not allowed through bot. \n\n \n\n";
+    body += "2. Bot is not allowed to make production deployments. \n\n \n\n";
     
 
     // do something to process your command and return message activity as the response
