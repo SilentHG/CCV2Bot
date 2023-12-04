@@ -47,6 +47,13 @@ class CreateDeploymentCommandHandler {
       return;
     }
 
+    if (environmentCode == "p1" || environmentCode == "p2" || environmentCode == "p3") {
+      // not allowed to deploy to p1, p2, p3
+      var message = "Bot is not allowed to make production deployments. \n\n";
+      await context.sendActivity(MessageFactory.text(message));
+      return;
+    }
+
     // check if the sender is admin or in createAccessUsers list
     if (item.adminId != senderId && item.createAccessUsers.indexOf(senderId) == -1) {
       var message = "You don't have access to create a deployment. \n\n";
