@@ -35,56 +35,68 @@ class CreateDeploymentCommandHandler {
     var subscriptionId = item.subscriptionCode;
     var bearer_token = item.apiToken;
 
-    var build_code = context.activity.text.split(" ")[1];
-    var databaseUpdateMode = context.activity.text.split(" ")[2].toUpperCase();
-    var environmentCode = context.activity.text.split(" ")[3];
-    var strategy = context.activity.text.split(" ")[4].toUpperCase();
+    let cardData = {};
 
-    if (databaseUpdateMode == "INITIALIZE") {
-      // not allowed to INITIALIZE
-      var message = "You are not allowed to INITIALIZE. \n\n";
-      await context.sendActivity(MessageFactory.text(message));
-      return;
-    }
+    try{
 
-    if (environmentCode == "p1" || environmentCode == "p2" || environmentCode == "p3") {
-      // not allowed to deploy to p1, p2, p3
-      var message = "Bot is not allowed to make production deployments. \n\n";
-      await context.sendActivity(MessageFactory.text(message));
-      return;
-    }
+      var build_code = context.activity.text.split(" ")[1];
+      var databaseUpdateMode = context.activity.text.split(" ")[2].toUpperCase();
+      var environmentCode = context.activity.text.split(" ")[3];
+      var strategy = context.activity.text.split(" ")[4].toUpperCase();
 
-    // check if the sender is admin or in createAccessUsers list
-    if (item.adminId != senderId && item.createAccessUsers.indexOf(senderId) == -1) {
-      var message = "You don't have access to create a deployment. \n\n";
-      await context.sendActivity(MessageFactory.text(message));
-      return;
-    }
-
-    // call an api to CCV2 to get the environments
-    const axios = require("axios");
-    const url = base_url + subscriptionId + "/deployments";
-    console.log(url);
-    const response = await axios.post(url, {
-      "buildCode": build_code,
-      "databaseUpdateMode": databaseUpdateMode,
-      "environmentCode" : environmentCode,
-      "strategy" : strategy
-    }, 
-    {
-      headers: {
-        Authorization: "Bearer " + bearer_token,
+      if (databaseUpdateMode == "INITIALIZE") {
+        // not allowed to INITIALIZE
+        var message = "You are not allowed to INITIALIZE. \n\n";
+        await context.sendActivity(MessageFactory.text(message));
+        return;
       }
-    });
-    console.log(response.data);
-    const deployment_code = response.data['code'];
-    let replyMessage = "Deployment with build code " + build_code + "\n\n Database Update Mode " + databaseUpdateMode + "\n\n Environment Code " + environmentCode + "\n\n Strategy " + strategy + "\n\n has been created with code " + deployment_code;
 
-    // render your adaptive card for reply message
-    const cardData = {
-      title: "Deployment is now created",
-      body: replyMessage,
-    };
+      if (environmentCode == "p1" || environmentCode == "p2" || environmentCode == "p3") {
+        // not allowed to deploy to p1, p2, p3
+        var message = "Bot is not allowed to make production deployments. \n\n";
+        await context.sendActivity(MessageFactory.text(message));
+        return;
+      }
+
+      // check if the sender is admin or in createAccessUsers list
+      if (item.adminId != senderId && item.createAccessUsers.indexOf(senderId) == -1) {
+        var message = "You don't have access to create a deployment. \n\n";
+        await context.sendActivity(MessageFactory.text(message));
+        return;
+      }
+
+      // call an api to CCV2 to get the environments
+      const axios = require("axios");
+      const url = base_url + subscriptionId + "/deployments";
+      console.log(url);
+      const response = await axios.post(url, {
+        "buildCode": build_code,
+        "databaseUpdateMode": databaseUpdateMode,
+        "environmentCode" : environmentCode,
+        "strategy" : strategy
+      }, 
+      {
+        headers: {
+          Authorization: "Bearer " + bearer_token,
+        }
+      });
+      console.log(response.data);
+      const deployment_code = response.data['code'];
+      let replyMessage = "Deployment has been created with code " + deployment_code + "\n\n for build code " + build_code + "\n\n Database Update Mode " + databaseUpdateMode + "\n\n Environment Code " + environmentCode + "\n\n Strategy " + strategy + "\n\n Please check the deployment status using the command: getDeploymentProgress " + deployment_code;
+
+      cardData = {
+        title: "Deployment is now created with + " + deployment_code,
+        body: replyMessage,
+      };
+    }
+    catch (error) {
+      console.error(error);
+      let replyMessage = "Error in creating the deployment, please recheck the parameters";
+      cardData = {
+        title: "Error in creating the deployment",
+        body: replyMessage,
+      };
+    }
 
     const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
     return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));

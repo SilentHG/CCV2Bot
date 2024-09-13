@@ -29,31 +29,42 @@ class GetEnvironmentsCommandHandler {
       return;
     }
 
-    var base_url = config.CCV2_BASE_URL;
-    var subscriptionId = item.subscriptionCode;
-    var bearer_token = item.apiToken;
-    // call an api to CCV2 to get the environments
-    const axios = require("axios");
-    const url = base_url + subscriptionId + "/environments";
-    console.log(url);
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: "Bearer " + bearer_token,
-      },
-    });
-    console.log(response.data);
-    const environments = response.data['value'];
-    let replyMessage = "";
-    for (const environment of environments) {
-      replyMessage += " ===================== \n\n Environment: " + environment['name'] + "\n\n Status: " + environment['status'] + " \n\n DeploymentStatus: " + environment['deploymentStatus'] + "\n\n";
+    let cardData = {};
+    try{
+
+      var base_url = config.CCV2_BASE_URL;
+      var subscriptionId = item.subscriptionCode;
+      var bearer_token = item.apiToken;
+      // call an api to CCV2 to get the environments
+      const axios = require("axios");
+      const url = base_url + subscriptionId + "/environments";
+      console.log(url);
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: "Bearer " + bearer_token,
+        },
+      });
+      console.log(response.data);
+      const environments = response.data['value'];
+      let replyMessage = "";
+      for (const environment of environments) {
+        replyMessage += " ===================== \n\n Environment: " + environment['name'] + "\n\n Status: " + environment['status'] + " \n\n DeploymentStatus: " + environment['deploymentStatus'] + "\n\n";
+      }
+
+      // render your adaptive card for reply message
+      cardData = {
+        title: "CCV2 Environments Information",
+        body: replyMessage,
+      };
+
+    } catch (error) {
+      console.error(error);
+      cardData = {
+        title: "Error",
+        body: "Failed to get environments information + " + error.message,
+      };
+
     }
-
-    // render your adaptive card for reply message
-    const cardData = {
-      title: "CCV2 Environments Information",
-      body: replyMessage,
-    };
-
     const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
     return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));
   }

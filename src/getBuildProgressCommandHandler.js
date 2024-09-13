@@ -71,26 +71,37 @@ class GetBuildProgressCommandHandler {
     }
     else {
 
-    // call an api to CCV2 to get current build progress
-    const axios = require("axios");
-    const url = base_url + subscriptionId + "/builds/"+build_code+"/progress";
-    console.log(url);
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: "Bearer " + bearer_token,
-      },
-    });
-    console.log(response.data);
-    const response_data = response.data;
-    let replyMessage = "Build with code " + build_code + " has the following progress: \n\n";
-    replyMessage += "Build Status: " + response_data['buildStatus'] + "\n\n";
-    replyMessage += "Percentage: " + response_data['percentage'] + "%\n\n";
+      let cardData = {};
+      try{
+        // call an api to CCV2 to get current build progress
+        const axios = require("axios");
+        const url = base_url + subscriptionId + "/builds/"+build_code+"/progress";
+        console.log(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: "Bearer " + bearer_token,
+          },
+        });
+        console.log(response.data);
+        const response_data = response.data;
+        let replyMessage = "Build with code " + build_code + " has the following progress: \n\n";
+        replyMessage += "Build Status: " + response_data['buildStatus'] + "\n\n";
+        replyMessage += "Percentage: " + response_data['percentage'] + "%\n\n";
 
-    // render your adaptive card for reply message
-    const cardData = {
-      title: "Build Progress Information",
-      body: replyMessage,
-    };
+        // render your adaptive card for reply message
+        cardData = {
+          title: "Build Progress Information",
+          body: replyMessage,
+        };
+      }
+      catch (error) {
+        console.error(error);
+        let replyMessage = "Error in getting the build progress, please recheck the build code";
+        cardData = {
+          title: "Error in getting the build progress",
+          body: replyMessage,
+        };
+      }
 
     const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
     return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));

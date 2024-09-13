@@ -45,28 +45,39 @@ class CreateBuildCommandHandler {
       return;
     }
 
-    // call an api to CCV2 to get the environments
-    const axios = require("axios");
-    const url = base_url + subscriptionId + "/builds";
-    console.log(url);
-    const response = await axios.post(url, {
-      name: name,
-      branch: branch
-    },
-     {
-      headers: {
-        Authorization: "Bearer " + bearer_token,
-      }
-    });
-    console.log(response.data);
-    const build_code = response.data['code'];
-    let replyMessage = "Build with name " + name + " and Branch " + branch + "\n\n has been created with code " + build_code;
+    let cardData = {};
 
-    // render your adaptive card for reply message
-    const cardData = {
-      title: "Build is now created",
-      body: replyMessage,
-    };
+    try{
+      // call an api to CCV2 to get the environments
+      const axios = require("axios");
+      const url = base_url + subscriptionId + "/builds";
+      console.log(url);
+      const response = await axios.post(url, {
+        name: name,
+        branch: branch
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + bearer_token,
+        }
+      });
+      console.log(response.data);
+      const build_code = response.data['code'];
+      let replyMessage = "Build with name " + name + " and Branch " + branch + "\n\n has been created with code " + build_code;
+
+      // render your adaptive card for reply message
+      cardData = {
+        title: "Build created",
+        body: replyMessage,
+      };
+  } catch (error) {
+      console.error(error);
+      let replyMessage = "Error in creating the build, please recheck the name and branch";
+      cardData = {
+        title: "Error in creating the build",
+        body: replyMessage,
+      };
+  }
 
     const cardJson = AdaptiveCards.declare(getEnvironmentsCard).render(cardData);
     return MessageFactory.attachment(CardFactory.adaptiveCard(cardJson));
